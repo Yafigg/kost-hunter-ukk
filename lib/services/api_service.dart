@@ -971,6 +971,48 @@ class ApiService {
     }
   }
 
+  // Transaction History/Reports
+  Future<Map<String, dynamic>> getTransactionHistory({
+    String? month, // Format: YYYY-MM
+    String? year, // Format: YYYY
+    String? startDate, // Format: YYYY-MM-DD
+    String? endDate, // Format: YYYY-MM-DD
+    String? status, // pending, accept, reject, approved, rejected
+  }) async {
+    try {
+      final queryParams = <String, dynamic>{};
+      if (month != null && month.isNotEmpty) queryParams['month'] = month;
+      if (year != null && year.isNotEmpty) queryParams['year'] = year;
+      if (startDate != null && startDate.isNotEmpty)
+        queryParams['start_date'] = startDate;
+      if (endDate != null && endDate.isNotEmpty)
+        queryParams['end_date'] = endDate;
+      if (status != null && status.isNotEmpty) queryParams['status'] = status;
+
+      final response = await _dio.get(
+        '/owner/reports/bookings',
+        queryParameters: queryParams.isEmpty ? null : queryParams,
+      );
+
+      if (response.statusCode == 200 && response.data is Map) {
+        final responseData = response.data as Map<String, dynamic>;
+        return responseData;
+      }
+
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        message: 'Gagal memuat laporan transaksi',
+      );
+    } catch (e) {
+      if (e is DioException) rethrow;
+      throw DioException(
+        requestOptions: RequestOptions(path: '/owner/reports/bookings'),
+        message: 'Error: ${e.toString()}',
+      );
+    }
+  }
+
   Future<Map<String, dynamic>> replyToReview(
     int reviewId,
     String ownerReply,

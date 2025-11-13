@@ -301,6 +301,15 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           _buildDivider(),
           _buildAdminItem(
+            icon: Icons.receipt_long_rounded,
+            title: 'Laporan Transaksi',
+            subtitle: 'Lihat riwayat dan laporan transaksi',
+            onTap: () {
+              Navigator.of(context).pushNamed('/transaction_history');
+            },
+          ),
+          _buildDivider(),
+          _buildAdminItem(
             icon: Icons.analytics_rounded,
             title: 'Analytics',
             subtitle: 'Lihat statistik dan laporan',

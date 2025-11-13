@@ -15,6 +15,7 @@ import 'pages/auth/forgot_password_page.dart';
 import 'pages/owner/manage_kos_page.dart';
 import 'pages/owner/edit_kos_page.dart';
 import 'pages/owner/reviews_page.dart';
+import 'pages/owner/transaction_history_page.dart';
 import 'pages/society/booking_success_page.dart';
 import 'models/kos.dart';
 
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         '/forgot-password': (_) => const ForgotPasswordPage(),
         '/change-password': (_) => const ChangePasswordPage(),
         '/reviews': (_) => const ReviewsPage(),
+        '/transaction_history': (_) => const TransactionHistoryPage(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/booking_detail') {
