@@ -205,6 +205,8 @@ class _RegisterPageState extends State<RegisterPage> {
           });
         }
 
+        final colors = Theme.of(context).colorScheme;
+        
         return Dialog(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -224,7 +226,7 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Header dengan gradient hijau
+                // Header dengan gradient coklat
                 ClipRRect(
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(28),
@@ -240,9 +242,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.green.shade600,
-                          Colors.green.shade500,
-                          Colors.green.shade600,
+                          const Color(0xFF6E473B),
+                          const Color(0xFF8B6F5E),
+                          const Color(0xFF6E473B),
                         ],
                         stops: const [0.0, 0.5, 1.0],
                       ),
@@ -284,12 +286,12 @@ class _RegisterPageState extends State<RegisterPage> {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Colors.green.shade50,
+                          color: const Color(0xFF6E473B).withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.check_circle_rounded,
-                          color: Colors.green.shade600,
+                          color: colors.primary,
                           size: 48,
                         ),
                       ),
@@ -325,7 +327,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             Navigator.of(dialogContext, rootNavigator: true).pop();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green.shade600,
+                            backgroundColor: colors.primary,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
