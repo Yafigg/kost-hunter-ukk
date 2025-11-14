@@ -1,6 +1,6 @@
 # 📚 API Documentation - Gajayana Kost
 
-**Base URL:** `https://backend-gajayana-kost.throoner.my.id/api`
+**Base URL:** ``
 
 **Authentication:** Bearer Token (Laravel Sanctum)
 
@@ -30,7 +30,7 @@
 **Request:**
 
 ```bash
-curl -X GET https://backend-gajayana-kost.throoner.my.id/api/health
+curl -X GET https://backend-gajayana-kost/api/health
 ```
 
 **Response:**
@@ -54,7 +54,7 @@ curl -X GET https://backend-gajayana-kost.throoner.my.id/api/health
 **Request:**
 
 ```bash
-curl -X GET https://backend-gajayana-kost.throoner.my.id/api/test
+curl -X GET https://backend-gajayana-kost/api/test
 ```
 
 **Response:**
@@ -94,7 +94,7 @@ curl -X GET https://backend-gajayana-kost.throoner.my.id/api/test
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/register \
+curl -X POST https://backend-gajayana-kost/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "name": "John Doe",
@@ -158,7 +158,7 @@ curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/register \
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/login \
+curl -X POST https://backend-gajayana-kost/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "john@example.com",
@@ -212,7 +212,7 @@ curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/login \
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/check-email \
+curl -X POST https://backend-gajayana-kost/api/auth/check-email \
   -H "Content-Type: application/json" \
   -d '{
     "email": "john@example.com"
@@ -257,7 +257,7 @@ curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/check-email \
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/reset-password \
+curl -X POST https://backend-gajayana-kost/api/auth/reset-password \
   -H "Content-Type: application/json" \
   -d '{
     "email": "john@example.com",
@@ -295,7 +295,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X GET https://backend-gajayana-kost.throoner.my.id/api/auth/user \
+curl -X GET https://backend-gajayana-kost/api/auth/user \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
@@ -341,7 +341,7 @@ avatar: [file] (optional)
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/profile \
+curl -X POST https://backend-gajayana-kost/api/auth/profile \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   -F "name=John Doe Updated" \
   -F "phone=081234567891" \
@@ -391,7 +391,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/change-password \
+curl -X POST https://backend-gajayana-kost/api/auth/change-password \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -428,7 +428,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/logout \
+curl -X POST https://backend-gajayana-kost/api/auth/logout \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
@@ -464,7 +464,7 @@ curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/logout \
 **cURL Example:**
 
 ```bash
-curl -X GET "https://backend-gajayana-kost.throoner.my.id/api/kos?page=1&gender=male&sort_by=price_low"
+curl -X GET "https://backend-gajayana-kost/api/kos?page=1&gender=male&sort_by=price_low"
 ```
 
 **Response (200):**
@@ -515,7 +515,7 @@ curl -X GET "https://backend-gajayana-kost.throoner.my.id/api/kos?page=1&gender=
 **cURL Example:**
 
 ```bash
-curl -X GET https://backend-gajayana-kost.throoner.my.id/api/kos/1
+curl -X GET https://backend-gajayana-kost/api/kos/1
 ```
 
 **Response (200):**
@@ -567,7 +567,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X GET https://backend-gajayana-kost.throoner.my.id/api/bookings \
+curl -X GET https://backend-gajayana-kost/api/bookings \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
@@ -629,7 +629,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/bookings \
+curl -X POST https://backend-gajayana-kost/api/bookings \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -683,7 +683,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X GET https://backend-gajayana-kost.throoner.my.id/api/bookings/1 \
+curl -X GET https://backend-gajayana-kost/api/bookings/1 \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
@@ -713,7 +713,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/kos/1/reviews \
+curl -X POST https://backend-gajayana-kost/api/kos/1/reviews \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -757,7 +757,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X PUT https://backend-gajayana-kost.throoner.my.id/api/reviews/1 \
+curl -X PUT https://backend-gajayana-kost/api/reviews/1 \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -792,7 +792,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X DELETE https://backend-gajayana-kost.throoner.my.id/api/reviews/1 \
+curl -X DELETE https://backend-gajayana-kost/api/reviews/1 \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
@@ -813,7 +813,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X GET https://backend-gajayana-kost.throoner.my.id/api/favorites \
+curl -X GET https://backend-gajayana-kost/api/favorites \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
@@ -842,7 +842,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/favorites \
+curl -X POST https://backend-gajayana-kost/api/favorites \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -875,7 +875,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X DELETE https://backend-gajayana-kost.throoner.my.id/api/favorites/1 \
+curl -X DELETE https://backend-gajayana-kost/api/favorites/1 \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
@@ -898,7 +898,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X GET https://backend-gajayana-kost.throoner.my.id/api/owner/kos \
+curl -X GET https://backend-gajayana-kost/api/owner/kos \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
@@ -958,7 +958,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/owner/kos \
+curl -X POST https://backend-gajayana-kost/api/owner/kos \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1009,7 +1009,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X GET https://backend-gajayana-kost.throoner.my.id/api/owner/kos/1 \
+curl -X GET https://backend-gajayana-kost/api/owner/kos/1 \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
@@ -1044,7 +1044,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X PUT https://backend-gajayana-kost.throoner.my.id/api/owner/kos/1 \
+curl -X PUT https://backend-gajayana-kost/api/owner/kos/1 \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1103,7 +1103,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X DELETE https://backend-gajayana-kost.throoner.my.id/api/owner/kos/1 \
+curl -X DELETE https://backend-gajayana-kost/api/owner/kos/1 \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
@@ -1143,7 +1143,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/owner/kos/1/rooms \
+curl -X POST https://backend-gajayana-kost/api/owner/kos/1/rooms \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1201,7 +1201,7 @@ images[]: [file2]
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/owner/kos/1/images \
+curl -X POST https://backend-gajayana-kost/api/owner/kos/1/images \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   -F "images[]=@/path/to/image1.jpg" \
   -F "images[]=@/path/to/image2.jpg"
@@ -1224,7 +1224,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X GET https://backend-gajayana-kost.throoner.my.id/api/owner/bookings \
+curl -X GET https://backend-gajayana-kost/api/owner/bookings \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
@@ -1254,7 +1254,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X PUT https://backend-gajayana-kost.throoner.my.id/api/owner/bookings/1/status \
+curl -X PUT https://backend-gajayana-kost/api/owner/bookings/1/status \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1297,7 +1297,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X GET https://backend-gajayana-kost.throoner.my.id/api/owner/reviews \
+curl -X GET https://backend-gajayana-kost/api/owner/reviews \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
@@ -1326,7 +1326,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/owner/reviews/1/reply \
+curl -X POST https://backend-gajayana-kost/api/owner/reviews/1/reply \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1359,7 +1359,7 @@ Authorization: Bearer {token}
 **cURL Example:**
 
 ```bash
-curl -X GET https://backend-gajayana-kost.throoner.my.id/api/owner/analytics \
+curl -X GET https://backend-gajayana-kost/api/owner/analytics \
   -H "Authorization: Bearer 2|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
@@ -1393,7 +1393,7 @@ curl -X GET https://backend-gajayana-kost.throoner.my.id/api/owner/analytics \
 #### 1. Register as Society User
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/register \
+curl -X POST https://backend-gajayana-kost/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Test User",
@@ -1410,7 +1410,7 @@ curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/register \
 #### 2. Login
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/login \
+curl -X POST https://backend-gajayana-kost/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -1421,19 +1421,19 @@ curl -X POST https://backend-gajayana-kost.throoner.my.id/api/auth/login \
 #### 3. Get All Kos
 
 ```bash
-curl -X GET "https://backend-gajayana-kost.throoner.my.id/api/kos?page=1&gender=male"
+curl -X GET "https://backend-gajayana-kost/api/kos?page=1&gender=male"
 ```
 
 #### 4. Get Kos Detail
 
 ```bash
-curl -X GET https://backend-gajayana-kost.throoner.my.id/api/kos/1
+curl -X GET https://backend-gajayana-kost/api/kos/1
 ```
 
 #### 5. Create Booking (with token)
 
 ```bash
-curl -X POST https://backend-gajayana-kost.throoner.my.id/api/bookings \
+curl -X POST https://backend-gajayana-kost/api/bookings \
   -H "Authorization: Bearer YOUR_TOKEN_HERE" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1464,8 +1464,8 @@ curl -X POST https://backend-gajayana-kost.throoner.my.id/api/bookings \
 
 ## 🔗 Base URLs
 
-- **API Base URL:** `https://backend-gajayana-kost.throoner.my.id/api`
-- **Storage Base URL:** `https://backend-gajayana-kost.throoner.my.id/storage`
+- **API Base URL:** `https://backend-gajayana-kost/api`
+- **Storage Base URL:** `https://backend-gajayana-kost/storage`
 
 ---
 
