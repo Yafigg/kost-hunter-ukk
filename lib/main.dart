@@ -44,9 +44,7 @@ class MyApp extends StatelessWidget {
         '/dashboard': (_) => const DashboardPage(),
         '/add_kos': (_) => const AddKosPage(),
         '/manage_kos': (_) => const ManageKosPage(),
-        '/edit_kos': (_) => EditKosPage(
-          kos: Kos(id: 0, name: '', address: ''),
-        ),
+        // '/edit_kos' removed - handled by onGenerateRoute to accept arguments
         '/forgot-password': (_) => const ForgotPasswordPage(),
         '/change-password': (_) => const ChangePasswordPage(),
         '/reviews': (_) => const ReviewsPage(),
@@ -68,8 +66,81 @@ class MyApp extends StatelessWidget {
           );
         }
         if (settings.name == '/edit_kos') {
-          final kos = settings.arguments as Kos;
-          return MaterialPageRoute(builder: (_) => EditKosPage(kos: kos));
+          // Accept Map with id/name, int ID, or Kos object
+          final args = settings.arguments;
+          print('DEBUG main.dart: ========== ROUTE /edit_kos ==========');
+          print('DEBUG main.dart: Received arguments: $args');
+          print('DEBUG main.dart: Arguments type: ${args.runtimeType}');
+          
+          if (args == null) {
+            print('DEBUG main.dart: ❌ Arguments is null!');
+            return MaterialPageRoute(
+              builder: (_) => EditKosPage(kos: Kos(id: 0, name: '', address: '')),
+            );
+          }
+          
+          // Check if it's a Map (could be Map<String, dynamic> or Map<String, Object>)
+          if (args is Map) {
+            print('DEBUG main.dart: ✅ Arguments is a Map');
+            print('DEBUG main.dart: Map keys: ${args.keys}');
+            print('DEBUG main.dart: Map values: ${args.values}');
+            
+            // Convert to Map<String, dynamic> for easier access
+            final map = Map<String, dynamic>.from(args);
+            final id = map['id'];
+            final name = map['name'];
+            
+            print('DEBUG main.dart: Extracted id: $id (type: ${id.runtimeType})');
+            print('DEBUG main.dart: Extracted name: "$name" (type: ${name.runtimeType})');
+            
+            // Convert id to int
+            int kosId = 0;
+            if (id is int) {
+              kosId = id;
+            } else if (id is num) {
+              kosId = id.toInt();
+            } else {
+              print('DEBUG main.dart: ⚠️ ID is not a number, trying to parse...');
+              kosId = int.tryParse(id.toString()) ?? 0;
+            }
+            
+            // Convert name to String
+            String kosName = '';
+            if (name is String) {
+              kosName = name;
+            } else {
+              kosName = name?.toString() ?? '';
+            }
+            
+            print('DEBUG main.dart: Final kosId: $kosId, kosName: "$kosName"');
+            
+            return MaterialPageRoute(
+              builder: (_) {
+                final kos = Kos(id: kosId, name: kosName, address: '');
+                print('DEBUG main.dart: ✅ Created Kos object with ID: ${kos.id}, Name: "${kos.name}"');
+                return EditKosPage(kos: kos);
+              },
+            );
+          } else if (args is int) {
+            // If ID is passed, create a minimal Kos object with the ID
+            print('DEBUG main.dart: Arguments is int: $args');
+            return MaterialPageRoute(
+              builder: (_) {
+                final kos = Kos(id: args, name: '', address: '');
+                print('DEBUG main.dart: Created Kos object with ID: ${kos.id}');
+                return EditKosPage(kos: kos);
+              },
+            );
+          } else if (args is Kos) {
+            print('DEBUG main.dart: Arguments is Kos object with ID: ${args.id}');
+            return MaterialPageRoute(builder: (_) => EditKosPage(kos: args));
+          } else {
+            // Fallback: create empty Kos
+            print('DEBUG main.dart: ❌ Unknown arguments type: ${args.runtimeType}');
+            return MaterialPageRoute(
+              builder: (_) => EditKosPage(kos: Kos(id: 0, name: '', address: '')),
+            );
+          }
         }
         if (settings.name == '/booking_success') {
           final bookingData = settings.arguments as Map<String, dynamic>;

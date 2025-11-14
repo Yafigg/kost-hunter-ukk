@@ -34,7 +34,7 @@ class _AddKosPageState extends State<AddKosPage> {
 
   bool _isLoading = false;
 
-  final List<String> _availableFacilities = [
+  List<String> _availableFacilities = [
     'AC',
     'Kamar Mandi Dalam',
     'Kamar Mandi Luar',
@@ -42,7 +42,7 @@ class _AddKosPageState extends State<AddKosPage> {
     'TV',
   ];
 
-  final List<String> _availablePaymentMethods = [
+  List<String> _availablePaymentMethods = [
     'Transfer Bank',
     'E-Wallet',
     'Cash',
@@ -485,18 +485,81 @@ class _AddKosPageState extends State<AddKosPage> {
           Wrap(
             spacing: 10,
             runSpacing: 10,
-            children: _availableFacilities.map((facility) {
-              final isSelected = _selectedFacilities.contains(facility);
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (isSelected) {
-                      _selectedFacilities.remove(facility);
-                    } else {
-                      _selectedFacilities.add(facility);
-                    }
-                  });
-                },
+            children: [
+              ..._availableFacilities.map((facility) {
+                final isSelected = _selectedFacilities.contains(facility);
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (isSelected) {
+                        _selectedFacilities.remove(facility);
+                      } else {
+                        _selectedFacilities.add(facility);
+                      }
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? const Color(0xFF6E473B)
+                          : const Color(0xFFBEB5A9),
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(
+                        color: isSelected
+                            ? const Color(0xFF6E473B)
+                            : const Color(0xFFBEB5A9),
+                        width: 1.5,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: const Color(0xFF6E473B).withOpacity(0.25),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : [
+                              BoxShadow(
+                                color: const Color(0xFF291C0E).withOpacity(0.08),
+                                blurRadius: 4,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (isSelected) ...[
+                          Icon(
+                            Icons.check_circle_rounded,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 6),
+                        ],
+                        Text(
+                          facility,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: isSelected
+                                ? Colors.white
+                                : const Color(0xFF291C0E),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+              // Add button for custom facility
+              GestureDetector(
+                onTap: () => _showAddFacilityDialog(),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(
@@ -504,58 +567,43 @@ class _AddKosPageState extends State<AddKosPage> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: isSelected
-                        ? const Color(0xFF6E473B)
-                        : const Color(0xFFBEB5A9),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(25),
                     border: Border.all(
-                      color: isSelected
-                          ? const Color(0xFF6E473B)
-                          : const Color(0xFFBEB5A9),
-                      width: 1.5,
+                      color: const Color(0xFF6E473B),
+                      width: 2,
+                      style: BorderStyle.solid,
                     ),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: const Color(0xFF6E473B).withOpacity(0.25),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ]
-                        : [
-                            BoxShadow(
-                              color: const Color(0xFF291C0E).withOpacity(0.08),
-                              blurRadius: 4,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF6E473B).withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (isSelected) ...[
-                        Icon(
-                          Icons.check_circle_rounded,
-                          color: Colors.white,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 6),
-                      ],
+                      Icon(
+                        Icons.add_rounded,
+                        color: const Color(0xFF6E473B),
+                        size: 18,
+                      ),
+                      const SizedBox(width: 6),
                       Text(
-                        facility,
+                        'Tambah',
                         style: GoogleFonts.poppins(
                           fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: isSelected
-                              ? Colors.white
-                              : const Color(0xFF291C0E),
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF6E473B),
                         ),
                       ),
                     ],
                   ),
                 ),
-              );
-            }).toList(),
+              ),
+            ],
           ),
           if (_selectedFacilities.isNotEmpty) ...[
             const SizedBox(height: 16),
@@ -639,18 +687,81 @@ class _AddKosPageState extends State<AddKosPage> {
           Wrap(
             spacing: 10,
             runSpacing: 10,
-            children: _availablePaymentMethods.map((method) {
-              final isSelected = _selectedPaymentMethods.contains(method);
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (isSelected) {
-                      _selectedPaymentMethods.remove(method);
-                    } else {
-                      _selectedPaymentMethods.add(method);
-                    }
-                  });
-                },
+            children: [
+              ..._availablePaymentMethods.map((method) {
+                final isSelected = _selectedPaymentMethods.contains(method);
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (isSelected) {
+                        _selectedPaymentMethods.remove(method);
+                      } else {
+                        _selectedPaymentMethods.add(method);
+                      }
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? const Color(0xFF6E473B)
+                          : const Color(0xFFBEB5A9),
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(
+                        color: isSelected
+                            ? const Color(0xFF6E473B)
+                            : const Color(0xFFBEB5A9),
+                        width: 1.5,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: const Color(0xFF6E473B).withOpacity(0.25),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : [
+                              BoxShadow(
+                                color: const Color(0xFF291C0E).withOpacity(0.08),
+                                blurRadius: 4,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (isSelected) ...[
+                          Icon(
+                            Icons.check_circle_rounded,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 6),
+                        ],
+                        Text(
+                          method,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: isSelected
+                                ? Colors.white
+                                : const Color(0xFF291C0E),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+              // Add button for custom payment method
+              GestureDetector(
+                onTap: () => _showAddPaymentMethodDialog(),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(
@@ -658,58 +769,43 @@ class _AddKosPageState extends State<AddKosPage> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: isSelected
-                        ? const Color(0xFF6E473B)
-                        : const Color(0xFFBEB5A9),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(25),
                     border: Border.all(
-                      color: isSelected
-                          ? const Color(0xFF6E473B)
-                          : const Color(0xFFBEB5A9),
-                      width: 1.5,
+                      color: const Color(0xFF6E473B),
+                      width: 2,
+                      style: BorderStyle.solid,
                     ),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: const Color(0xFF6E473B).withOpacity(0.25),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ]
-                        : [
-                            BoxShadow(
-                              color: const Color(0xFF291C0E).withOpacity(0.08),
-                              blurRadius: 4,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF6E473B).withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (isSelected) ...[
-                        Icon(
-                          Icons.check_circle_rounded,
-                          color: Colors.white,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 6),
-                      ],
+                      Icon(
+                        Icons.add_rounded,
+                        color: const Color(0xFF6E473B),
+                        size: 18,
+                      ),
+                      const SizedBox(width: 6),
                       Text(
-                        method,
+                        'Tambah',
                         style: GoogleFonts.poppins(
                           fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: isSelected
-                              ? Colors.white
-                              : const Color(0xFF291C0E),
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF6E473B),
                         ),
                       ),
                     ],
                   ),
                 ),
-              );
-            }).toList(),
+              ),
+            ],
           ),
           if (_selectedPaymentMethods.isNotEmpty) ...[
             const SizedBox(height: 16),
@@ -1042,6 +1138,380 @@ class _AddKosPageState extends State<AddKosPage> {
     setState(() {
       _rooms.removeAt(index);
     });
+  }
+
+  void _showAddFacilityDialog() {
+    final TextEditingController facilityController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(28),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 30,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(28),
+                    topRight: Radius.circular(28),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 20,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          const Color(0xFF6E473B),
+                          const Color(0xFF8B6F5E),
+                        ],
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.add_rounded,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            'Tambah Fasilitas',
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: facilityController,
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          labelText: 'Nama Fasilitas',
+                          hintText: 'Contoh: WiFi, Parkir, Dapur',
+                          prefixIcon: const Icon(Icons.home_work_rounded),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF6E473B),
+                              width: 1.5,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFBEB5A9),
+                              width: 1.5,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF6E473B),
+                              width: 2,
+                            ),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        style: GoogleFonts.poppins(),
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => Navigator.of(dialogContext).pop(),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(
+                                  color: Color(0xFF6E473B),
+                                  width: 1.5,
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: Text(
+                                'Batal',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF6E473B),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                final facilityName = facilityController.text.trim();
+                                if (facilityName.isNotEmpty) {
+                                  setState(() {
+                                    if (!_availableFacilities.contains(facilityName)) {
+                                      _availableFacilities.add(facilityName);
+                                    }
+                                    if (!_selectedFacilities.contains(facilityName)) {
+                                      _selectedFacilities.add(facilityName);
+                                    }
+                                  });
+                                  Navigator.of(dialogContext).pop();
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF6E473B),
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                elevation: 2,
+                              ),
+                              child: Text(
+                                'Tambah',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showAddPaymentMethodDialog() {
+    final TextEditingController methodController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(28),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 30,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(28),
+                    topRight: Radius.circular(28),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 20,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          const Color(0xFF6E473B),
+                          const Color(0xFF8B6F5E),
+                        ],
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.add_rounded,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            'Tambah Metode Pembayaran',
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: methodController,
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          labelText: 'Nama Metode Pembayaran',
+                          hintText: 'Contoh: QRIS, OVO, GoPay',
+                          prefixIcon: const Icon(Icons.payment_rounded),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF6E473B),
+                              width: 1.5,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFBEB5A9),
+                              width: 1.5,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF6E473B),
+                              width: 2,
+                            ),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        style: GoogleFonts.poppins(),
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => Navigator.of(dialogContext).pop(),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(
+                                  color: Color(0xFF6E473B),
+                                  width: 1.5,
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: Text(
+                                'Batal',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF6E473B),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                final methodName = methodController.text.trim();
+                                if (methodName.isNotEmpty) {
+                                  setState(() {
+                                    if (!_availablePaymentMethods.contains(methodName)) {
+                                      _availablePaymentMethods.add(methodName);
+                                    }
+                                    if (!_selectedPaymentMethods.contains(methodName)) {
+                                      _selectedPaymentMethods.add(methodName);
+                                    }
+                                  });
+                                  Navigator.of(dialogContext).pop();
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF6E473B),
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                elevation: 2,
+                              ),
+                              child: Text(
+                                'Tambah',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _submitForm() async {

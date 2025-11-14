@@ -13,29 +13,29 @@ class ApiService {
   final Dio _dio;
 
   ApiService()
-    : _dio = Dio(
-        BaseOptions(
-          baseUrl: apiBaseUrl,
-          connectTimeout: const Duration(seconds: 15),
-          receiveTimeout: const Duration(seconds: 20),
+      : _dio = Dio(
+          BaseOptions(
+            baseUrl: apiBaseUrl,
+            connectTimeout: const Duration(seconds: 15),
+            receiveTimeout: const Duration(seconds: 20),
           responseType: ResponseType.json,
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-        ),
-      ) {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+          ),
+        ) {
     _dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          // Attach auth token if present
-          final prefs = await SharedPreferences.getInstance();
-          final token = prefs.getString('auth_token');
-          if (token != null && token.isNotEmpty) {
-            options.headers['Authorization'] = 'Bearer $token';
-          }
-          return handler.next(options);
-        },
+      onRequest: (options, handler) async {
+        // Attach auth token if present
+        final prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString('auth_token');
+        if (token != null && token.isNotEmpty) {
+          options.headers['Authorization'] = 'Bearer $token';
+        }
+        return handler.next(options);
+      },
       ),
     );
   }
@@ -115,8 +115,8 @@ class ApiService {
         final user = User.fromJson(userJson);
         // Hanya simpan token jika saveToken = true
         if (saveToken) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('auth_token', token);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
         }
         return (user, token);
       }
@@ -191,7 +191,8 @@ class ApiService {
   }) async {
     final qp = {
       'page': page,
-      if (gender.isNotEmpty) 'gender': gender,
+      // Send 'mixed' to backend for campur filter, 'all' means no filter
+      if (gender.isNotEmpty && gender != 'all') 'gender': gender,
       if (search != null && search.isNotEmpty) 'search': search,
       if (minPrice != null) 'min_price': minPrice,
       if (maxPrice != null) 'max_price': maxPrice,
@@ -394,10 +395,10 @@ class ApiService {
       final response = await _dio.post(
         '/bookings',
         data: {
-          'kos_id': kosId,
-          'room_id': roomId,
-          'start_date': fmt(startDate),
-          'end_date': fmt(endDate),
+      'kos_id': kosId,
+      'room_id': roomId,
+      'start_date': fmt(startDate),
+      'end_date': fmt(endDate),
         },
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
@@ -405,13 +406,13 @@ class ApiService {
       if ((response.statusCode ?? 0) >= 200 &&
           (response.statusCode ?? 0) < 300) {
         final data = response.data['data'] ?? response.data;
-        return (data is Map<String, dynamic>) ? data : {'data': data};
-      }
-      throw DioException(
-        requestOptions: response.requestOptions,
-        response: response,
+      return (data is Map<String, dynamic>) ? data : {'data': data};
+    }
+    throw DioException(
+      requestOptions: response.requestOptions,
+      response: response,
         message: response.data?['message'] ?? 'Gagal membuat booking',
-      );
+    );
     } on DioException catch (e) {
       // Re-throw with better error message
       if (e.response?.statusCode == 403) {
@@ -540,14 +541,14 @@ class ApiService {
 
     // Jika user adalah society atau role tidak diketahui, coba endpoint society
     try {
-      final response = await _dio.get('/bookings');
+    final response = await _dio.get('/bookings');
       if (response.statusCode == 200 && response.data is Map) {
-        final data = response.data['data'];
-        if (data is List) {
-          return data.cast<Map<String, dynamic>>();
+    final data = response.data['data'];
+    if (data is List) {
+      return data.cast<Map<String, dynamic>>();
         }
-      }
-      return const [];
+    }
+    return const [];
     } catch (e) {
       // Jika endpoint society gagal dan role tidak diketahui, coba endpoint owner sebagai fallback
       if (user?.role == null &&
@@ -670,7 +671,7 @@ class ApiService {
       print(
         'DEBUG ApiService: getBookingDetail - Using society endpoint for booking ID: $bookingId',
       );
-      final response = await _dio.get('/bookings/$bookingId');
+    final response = await _dio.get('/bookings/$bookingId');
       if (response.statusCode == 200 && response.data is Map) {
         final responseData = response.data as Map<String, dynamic>;
         final data = responseData['data'];
@@ -681,11 +682,11 @@ class ApiService {
           return data;
         }
       }
-      throw DioException(
-        requestOptions: response.requestOptions,
-        response: response,
-        message: 'Gagal memuat detail booking',
-      );
+    throw DioException(
+      requestOptions: response.requestOptions,
+      response: response,
+      message: 'Gagal memuat detail booking',
+    );
     } catch (e) {
       print(
         'DEBUG ApiService: getBookingDetail - Error from society endpoint: $e',
@@ -957,26 +958,42 @@ class ApiService {
     required String name,
     required String address,
     required String description,
-    required String gender,
-    required List<String> facilities,
-    required List<String> paymentMethods,
-    required List<Map<String, dynamic>> rooms,
-    List<String>? images,
+    required double pricePerMonth,
+    String? gender,
+    String? whatsappNumber,
+    double? latitude,
+    double? longitude,
+    List<String>? facilities,
+    List<String>? paymentMethods,
   }) async {
-    final response = await _dio.put(
-      '/kos/$id',
-      data: {
-        'name': name,
-        'address': address,
-        'description': description,
-        'gender': gender,
-        'facilities': facilities,
-        'payment_methods': paymentMethods,
-        'rooms': rooms,
-        'images': images ?? [],
-      },
-    );
-    return response.data;
+    try {
+      final token = await _getToken();
+      if (token == null) throw Exception('Token tidak ditemukan');
+
+      final response = await _dio.put(
+        '/owner/kos/$id',
+        data: {
+          'name': name,
+          'address': address,
+          'description': description,
+          'price_per_month': pricePerMonth.toInt(),
+          if (gender != null) 'gender': gender,
+          if (whatsappNumber != null) 'whatsapp_number': whatsappNumber,
+          if (latitude != null) 'latitude': latitude,
+          if (longitude != null) 'longitude': longitude,
+          if (facilities != null) 'facilities': facilities,
+          if (paymentMethods != null) 'payment_methods': paymentMethods,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      return response.data;
+    } catch (e) {
+      print('Error updating kos: $e');
+      rethrow;
+    }
   }
 
   Future<void> deleteKos(int id) async {
@@ -987,6 +1004,34 @@ class ApiService {
       '/owner/kos/$id',
       options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
+  }
+
+  // Get owner's kos detail with full data
+  Future<Map<String, dynamic>> getOwnerKosDetail(int id) async {
+    try {
+      final token = await _getToken();
+      if (token == null) throw Exception('Token tidak ditemukan');
+
+      final response = await _dio.get(
+        '/owner/kos/$id',
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data is Map) {
+        return response.data['data'] as Map<String, dynamic>;
+      }
+
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        message: 'Gagal memuat detail kos',
+      );
+    } catch (e) {
+      print('Error fetching owner kos detail: $e');
+      rethrow;
+    }
   }
 
   // Review Management (Owner)
@@ -1134,18 +1179,32 @@ class ApiService {
 
   Future<List<Kos>> getMyKos() async {
     try {
-      // Use the existing /kos endpoint and filter on frontend
-      // This is simpler than creating a new backend endpoint
-      final response = await _dio.get('/kos');
+      final token = await _getToken();
+      if (token == null) throw Exception('Token tidak ditemukan');
+
+      // Use /owner/kos endpoint to get owner's kos with full data
+      final response = await _dio.get(
+        '/owner/kos',
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      print('DEBUG ApiService.getMyKos: Response status: ${response.statusCode}');
+      print('DEBUG ApiService.getMyKos: Response data keys: ${response.data.keys}');
+
       final data = response.data['data'];
-
-      if (data is Map && data['data'] is List) {
-        final List<dynamic> kosList = data['data'];
-
-        // For demo purposes, return all kos
-        // In a real app, you could filter by user_id if needed
-        return kosList.map((json) {
+      if (data is List) {
+        print('DEBUG ApiService.getMyKos: Found ${data.length} kos items');
+        
+        final kosList = data.map((json) {
           final map = json as Map<String, dynamic>;
+          
+          print('DEBUG ApiService.getMyKos: Processing kos ID: ${map['id']}, Name: ${map['name']}');
+          print('DEBUG ApiService.getMyKos: Raw payment_methods: ${map['payment_methods']}');
+          print('DEBUG ApiService.getMyKos: payment_methods type: ${map['payment_methods'].runtimeType}');
+          
+          // Parse image
           String? imageUrl;
           try {
             final images = map['images'] as List?;
@@ -1156,9 +1215,115 @@ class ApiService {
                 imageUrl = '$storageBaseUrl/$file';
               }
             }
-          } catch (_) {}
+          } catch (e) {
+            print('DEBUG ApiService.getMyKos: Error parsing image: $e');
+          }
 
-          return Kos(
+          // Parse facilities
+          List<String> facilities = [];
+          try {
+            final facilitiesList = map['facilities'] as List?;
+            if (facilitiesList != null) {
+              facilities = facilitiesList.map((f) {
+                if (f is Map) {
+                  final facilityName = (f['facility'] ?? '').toString();
+                  // Map backend facility names to frontend display names
+                  if (facilityName.contains('Kamar Mandi Dalam')) return 'Kamar Mandi Dalam';
+                  if (facilityName.contains('Kamar Mandi Luar')) return 'Kamar Mandi Luar';
+                  if (facilityName.contains('AC') || facilityName == 'AC') return 'AC';
+                  if (facilityName.contains('Laundry') || facilityName == 'Laundry') return 'Laundry';
+                  if (facilityName.contains('TV') || facilityName == 'TV') return 'TV';
+                  return facilityName;
+                }
+                return f.toString();
+              }).where((f) => f.isNotEmpty).toList();
+            }
+            print('DEBUG ApiService.getMyKos: Parsed ${facilities.length} facilities: $facilities');
+          } catch (e) {
+            print('DEBUG ApiService.getMyKos: Error parsing facilities: $e');
+          }
+
+          // Parse rooms
+          List<Map<String, dynamic>> rooms = [];
+          try {
+            final roomsList = map['rooms'] as List?;
+            if (roomsList != null) {
+              rooms = roomsList.map((r) {
+                if (r is Map) {
+                  return {
+                    'name': (r['room_number'] ?? '').toString(),
+                    'price': (r['price'] as num?)?.toInt() ?? 0,
+                    'room_type': (r['room_type'] ?? 'single').toString(),
+                    'image': null,
+                  };
+                }
+                return {'name': 'Kamar', 'price': 0, 'image': null};
+              }).toList();
+            }
+            print('DEBUG ApiService.getMyKos: Parsed ${rooms.length} rooms');
+          } catch (e) {
+            print('DEBUG ApiService.getMyKos: Error parsing rooms: $e');
+          }
+
+          // Parse payment methods
+          List<String> paymentMethods = [];
+          try {
+            final paymentList = map['payment_methods'] as List?;
+            print('DEBUG ApiService.getMyKos: payment_methods from map: $paymentList');
+            print('DEBUG ApiService.getMyKos: payment_methods is null? ${paymentList == null}');
+            if (paymentList != null) {
+              print('DEBUG ApiService.getMyKos: payment_methods length: ${paymentList.length}');
+              paymentMethods = paymentList.map((p) {
+                print('DEBUG ApiService.getMyKos: Processing payment method: $p');
+                if (p is Map) {
+                  // Backend stores payment method name in 'bank_name' field
+                  // and type in 'type' field (Cash, Transfer, QRIS)
+                  final bankName = (p['bank_name'] ?? '').toString();
+                  final type = (p['type'] ?? '').toString();
+                  
+                  print('DEBUG ApiService.getMyKos: bank_name: "$bankName", type: "$type"');
+                  
+                  // Prioritize bank_name as it contains the actual payment method name
+                  // (e.g., "Cash", "Transfer", "OVO", "QRIS", "Bulanan", "Tahunan")
+                  if (bankName.isNotEmpty) {
+                    // Map common backend values to frontend display names
+                    final name = bankName.trim();
+                    if (name.toLowerCase() == 'monthly' || name.toLowerCase() == 'bulanan') return 'Bulanan';
+                    if (name.toLowerCase() == 'yearly' || name.toLowerCase() == 'tahunan') return 'Tahunan';
+                    if (name.toLowerCase() == 'cash') return 'Cash';
+                    if (name.toLowerCase() == 'transfer' || name.toLowerCase() == 'transfer bank') return 'Transfer';
+                    // Return as is for custom payment methods (OVO, QRIS, GoPay, etc.)
+                    print('DEBUG ApiService.getMyKos: Returning bank_name as is: "$name"');
+                    return name;
+                  }
+                  
+                  // Fallback to type if bank_name is empty
+                  if (type.isNotEmpty) {
+                    if (type.toLowerCase() == 'monthly') return 'Bulanan';
+                    if (type.toLowerCase() == 'yearly') return 'Tahunan';
+                    if (type.toLowerCase() == 'cash') return 'Cash';
+                    if (type.toLowerCase() == 'transfer') return 'Transfer';
+                    if (type.toLowerCase() == 'qris') return 'QRIS';
+                    print('DEBUG ApiService.getMyKos: Returning type as is: "$type"');
+                    return type;
+                  }
+                  
+                  print('DEBUG ApiService.getMyKos: Both bank_name and type are empty, returning empty string');
+                  return '';
+                }
+                print('DEBUG ApiService.getMyKos: Payment method is not a Map, converting to string: ${p.toString()}');
+                return p.toString();
+              }).where((p) => p.isNotEmpty).toList();
+            } else {
+              print('DEBUG ApiService.getMyKos: payment_methods is null or not a List');
+            }
+            print('DEBUG ApiService.getMyKos: Parsed ${paymentMethods.length} payment methods: $paymentMethods');
+          } catch (e) {
+            print('DEBUG ApiService.getMyKos: Error parsing payment methods: $e');
+            print('DEBUG ApiService.getMyKos: Stack trace: ${StackTrace.current}');
+          }
+
+          final kos = Kos(
             id: (map['id'] as num).toInt(),
             name: (map['name'] ?? '').toString(),
             address: (map['address'] ?? '').toString(),
@@ -1166,16 +1331,27 @@ class ApiService {
             image: imageUrl,
             price: (map['price_per_month'] as num?)?.toDouble(),
             gender: (map['gender'] as String?),
-            facilities: (map['facilities'] as List?)?.cast<String>() ?? [],
-            paymentMethods: [], // Default empty for now
-            rooms: [], // Default empty for now
+            facilities: facilities,
+            paymentMethods: paymentMethods,
+            rooms: rooms,
           );
+          
+          print('DEBUG ApiService.getMyKos: Created Kos object - ID: ${kos.id}, Name: ${kos.name}, Facilities: ${kos.facilities?.length ?? 0}, PaymentMethods: ${kos.paymentMethods?.length ?? 0}, Rooms: ${kos.rooms?.length ?? 0}');
+          
+          return kos;
         }).toList();
+        
+        print('DEBUG ApiService.getMyKos: Returning ${kosList.length} kos items');
+        return kosList;
       }
 
+      print('DEBUG ApiService.getMyKos: No data found or data is not a List');
       return [];
     } catch (e) {
-      // If there's an error, return empty list
+      print('DEBUG ApiService.getMyKos: Error fetching my kos: $e');
+      if (e is DioException) {
+        print('DEBUG ApiService.getMyKos: DioException response: ${e.response?.data}');
+      }
       return [];
     }
   }

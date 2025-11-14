@@ -19,6 +19,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _carouselCurrentIndex = 0;
   final _api = ApiService();
   final _items = <Kos>[];
   int? _nextPage = 1;
@@ -39,7 +40,12 @@ class _HomePageState extends State<HomePage> {
     {'name': 'Semua', 'icon': Icons.home_rounded, 'value': 'all'},
     {'name': 'Putra', 'icon': Icons.male_rounded, 'value': 'male'},
     {'name': 'Putri', 'icon': Icons.female_rounded, 'value': 'female'},
-    {'name': 'Campur', 'icon': Icons.people_rounded, 'value': 'mixed'},
+    {
+      'name': 'Campur',
+      'icon': Icons.people_rounded,
+      'value':
+          'mixed', // Use 'mixed' to distinguish from 'all', will be handled specially
+    },
   ];
 
   @override
@@ -459,15 +465,48 @@ class _HomePageState extends State<HomePage> {
             SliverToBoxAdapter(child: _emptyState(context))
           else
             SliverToBoxAdapter(
-              child: Container(
-                height:
-                    420, // Fixed height untuk carousel (dinaikkan untuk mencegah terpotong)
-                margin: const EdgeInsets.only(bottom: 32),
-                padding: const EdgeInsets.only(bottom: 24),
-                child: _CarouselWithEffect(
-                  items: _items,
-                  onTap: (kos) => _navigateToDetail(kos),
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Carousel dengan height lebih tinggi agar perlu scroll sedikit
+                  SizedBox(
+                    height: 420, // Ditinggikan untuk perlu scroll sedikit
+                    child: _CarouselWithEffect(
+                      items: _items,
+                      onTap: (kos) => _navigateToDetail(kos),
+                      onPageChanged: (index) {
+                        setState(() {
+                          _carouselCurrentIndex = index;
+                        });
+                      },
+                    ),
+                  ),
+                  // Indikator lebih ke bawah, tanpa container pembungkus
+                  if (_items.length > 1) ...[
+                    const SizedBox(
+                      height: 20,
+                    ), // Spacing lebih besar antara card dan indikator
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        _items.length,
+                        (index) => AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: _carouselCurrentIndex == index ? 24 : 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: _carouselCurrentIndex == index
+                                ? const Color(0xFF6E473B)
+                                : const Color(0xFF6E473B).withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16), // Spacing bawah sederhana
+                  ],
+                ],
               ),
             ),
         ],
@@ -1308,6 +1347,44 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
     maxController = widget.maxController;
   }
 
+  Widget _buildGenderChip(
+    String value,
+    String label,
+    String selected,
+    VoidCallback onTap,
+  ) {
+    // Check if this chip is selected
+    final isSelected = gender == value;
+
+    return GestureDetector(
+      onTap: () {
+        onTap();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF6E473B) : Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFF6E473B)
+                : const Color(0xFFBEB5A9),
+            width: 1.5,
+          ),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: isSelected ? Colors.white : const Color(0xFF6E473B),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -1353,16 +1430,25 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
             ),
           ),
           const SizedBox(height: 8),
-          SegmentedButton<String>(
-            segments: const [
-              ButtonSegment(value: 'all', label: Text('Semua')),
-              ButtonSegment(value: 'male', label: Text('Putra')),
-              ButtonSegment(value: 'female', label: Text('Putri')),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildGenderChip('all', 'Semua', gender, () {
+                setState(() => gender = 'all');
+              }),
+              _buildGenderChip('male', 'Putra', gender, () {
+                setState(() => gender = 'male');
+              }),
+              _buildGenderChip('female', 'Putri', gender, () {
+                setState(() => gender = 'female');
+              }),
+              _buildGenderChip('mixed', 'Campur', gender, () {
+                setState(
+                  () => gender = 'mixed',
+                ); // Campur = hanya gender = 'all' (campur)
+              }),
             ],
-            selected: {gender},
-            onSelectionChanged: (Set<String> newSelection) {
-              setState(() => gender = newSelection.first);
-            },
           ),
           const SizedBox(height: 16),
 
@@ -1578,8 +1664,13 @@ String _imageUrl(Kos kos) {
 class _CarouselWithEffect extends StatefulWidget {
   final List<Kos> items;
   final Function(Kos) onTap;
+  final Function(int)? onPageChanged;
 
-  const _CarouselWithEffect({required this.items, required this.onTap});
+  const _CarouselWithEffect({
+    required this.items,
+    required this.onTap,
+    this.onPageChanged,
+  });
 
   @override
   State<_CarouselWithEffect> createState() => _CarouselWithEffectState();
@@ -1592,7 +1683,7 @@ class _CarouselWithEffectState extends State<_CarouselWithEffect> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(viewportFraction: 0.8, initialPage: 0);
+    _pageController = PageController(viewportFraction: 0.85, initialPage: 0);
   }
 
   @override
@@ -1603,64 +1694,51 @@ class _CarouselWithEffectState extends State<_CarouselWithEffect> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: PageView.builder(
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-            itemCount: widget.items.length,
-            itemBuilder: (context, index) {
-              final kos = widget.items[index];
-              final isActive = index == _currentIndex;
+    return SizedBox(
+      height: double.infinity,
+      child: Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              controller: _pageController,
+              clipBehavior: Clip.none, // Tidak clip shadow
+              onPageChanged: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+                // Kirim currentIndex ke parent
+                widget.onPageChanged?.call(index);
+              },
+              itemCount: widget.items.length,
+              itemBuilder: (context, index) {
+                final kos = widget.items[index];
+                final isActive = index == _currentIndex;
 
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                margin: EdgeInsets.symmetric(
-                  horizontal: isActive ? 8 : 16,
-                  vertical: isActive ? 4 : 16,
-                ),
-                child: Transform.scale(
-                  scale: isActive ? 1.0 : 0.9,
-                  child: _HorizontalKosCard(
-                    kos: kos,
-                    isActive: isActive,
-                    onTap: () => widget.onTap(kos),
+                return Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isActive ? 8 : 16,
+                    vertical:
+                        0, // Tidak ada padding vertical yang membatasi shadow
                   ),
-                ),
-              );
-            },
-          ),
-        ),
-        // Page Indicators di bawah carousel (fixed, tidak ikut bergeser)
-        if (widget.items.length > 1)
-          Padding(
-            padding: const EdgeInsets.only(top: 30, bottom: 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                widget.items.length,
-                (index) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: _currentIndex == index ? 24 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: _currentIndex == index
-                        ? const Color(0xFF6E473B)
-                        : const Color(0xFF6E473B).withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(4),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    // Hapus margin vertical yang membatasi shadow
+                    child: Transform.scale(
+                      scale: isActive ? 1.0 : 0.9,
+                      child: _HorizontalKosCard(
+                        kos: kos,
+                        isActive: isActive,
+                        onTap: () => widget.onTap(kos),
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -1698,9 +1776,20 @@ class _HorizontalKosCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withOpacity(
+                0.3,
+              ), // Dipertebal dari 0.1 ke 0.3
+              blurRadius: 25, // Ditingkatkan dari 15 ke 25
+              offset: const Offset(0, 10), // Ditingkatkan dari 8 ke 10
+              spreadRadius:
+                  2, // Tambahkan spreadRadius untuk shadow lebih tebal
+            ),
+            BoxShadow(
+              color: Colors.black.withOpacity(
+                0.15,
+              ), // Shadow kedua untuk efek lebih tebal
               blurRadius: 15,
-              offset: const Offset(0, 8),
+              offset: const Offset(0, 5),
             ),
           ],
         ),

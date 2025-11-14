@@ -271,8 +271,7 @@ class _ManageKosPageState extends State<ManageKosPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F1EB),
-      body: SafeArea(
-        child: FadeTransition(
+      body: FadeTransition(
           opacity: _fadeAnimation,
           child: Column(
             children: [
@@ -293,16 +292,21 @@ class _ManageKosPageState extends State<ManageKosPage>
             ],
           ),
         ),
-      ),
-      floatingActionButton:
-          FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton.extended(
             onPressed: () => Navigator.of(context).pushNamed('/add_kos'),
             backgroundColor: const Color(0xFF6E473B),
             foregroundColor: Colors.white,
-            icon: const Icon(Icons.add),
+        icon: const Icon(Icons.add_rounded, size: 24),
             label: Text(
               'Tambah Kos',
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
+            fontSize: 15,
+          ),
+        ),
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
             ),
           ).animate().scale(
             duration: 600.ms,
@@ -313,37 +317,49 @@ class _ManageKosPageState extends State<ManageKosPage>
   }
 
   Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Back Button and Title
-          Row(
-            children: [
-              Container(
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        bottomLeft: Radius.circular(30),
+        bottomRight: Radius.circular(30),
+      ),
+      child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFF6E473B),
+              const Color(0xFF8B6F5E),
+              const Color(0xFF6E473B),
+            ],
+            stops: const [0.0, 0.5, 1.0],
+          ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF291C0E).withOpacity(0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                child: IconButton(
+        child: SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(
                     Icons.arrow_back_ios_new,
-                    color: Color(0xFF6E473B),
+                        color: Colors.white,
+                        size: 22,
                   ),
                 ),
-              ).animate().slideX(duration: 600.ms, curve: Curves.easeOutCubic),
-
-              const SizedBox(width: 16),
-
+                    const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,32 +367,37 @@ class _ManageKosPageState extends State<ManageKosPage>
                     Text(
                       'Kelola Kos',
                       style: GoogleFonts.poppins(
-                        fontSize: 28,
+                              fontSize: 24,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF291C0E),
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
                       ),
-                    ).animate().fadeIn(duration: 800.ms, delay: 200.ms),
-
+                          const SizedBox(height: 4),
                     Text(
                       'Kelola kos yang sudah Anda buat',
                       style: GoogleFonts.poppins(
                         fontSize: 14,
-                        color: const Color(0xFF291C0E).withOpacity(0.7),
-                      ),
-                    ).animate().fadeIn(duration: 800.ms, delay: 400.ms),
+                              color: Colors.white.withOpacity(0.9),
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
                   ],
                 ),
               ),
             ],
           ),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildSearchAndFilter() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
       child: Column(
         children: [
           // Search Bar
@@ -398,31 +419,35 @@ class _ManageKosPageState extends State<ManageKosPage>
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     color: const Color(0xFF291C0E),
+                fontWeight: FontWeight.w500,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Cari kos...',
                     hintStyle: GoogleFonts.poppins(
                       color: const Color(0xFF291C0E).withOpacity(0.5),
+                  fontWeight: FontWeight.w400,
                     ),
                     prefixIcon: const Icon(
-                      Icons.search,
+                  Icons.search_rounded,
                       color: Color(0xFF6E473B),
+                  size: 24,
                     ),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 20,
                       vertical: 16,
                     ),
+                filled: true,
+                fillColor: Colors.white,
                   ),
                 ),
-              )
-              .animate()
-              .fadeIn(duration: 800.ms, delay: 600.ms)
+          ).animate()
+              .fadeIn(duration: 800.ms, delay: 200.ms)
               .slideY(
                 begin: 0.3,
                 end: 0,
                 duration: 800.ms,
-                delay: 600.ms,
+                delay: 200.ms,
                 curve: Curves.easeOutCubic,
               ),
 
@@ -431,47 +456,64 @@ class _ManageKosPageState extends State<ManageKosPage>
           // Stats
           Row(
             children: [
-              Container(
+              Expanded(
+                child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
-                  vertical: 8,
+                    vertical: 12,
                 ),
                 decoration: BoxDecoration(
                   color: const Color(0xFF6E473B),
-                  borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF6E473B).withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                 ),
                 child: Text(
                   'Total: ${_kosList.length}',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
-                    fontSize: 12,
+                      fontSize: 14,
                     fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
 
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
 
-              Container(
+              Expanded(
+                child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
-                  vertical: 8,
+                    vertical: 12,
                 ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFBEB5A9),
-                  borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: const Color(0xFF6E473B).withOpacity(0.2),
+                      width: 1,
+                    ),
                 ),
                 child: Text(
                   'Ditampilkan: ${_filteredKosList.length}',
                   style: GoogleFonts.poppins(
                     color: const Color(0xFF291C0E),
-                    fontSize: 12,
+                      fontSize: 14,
                     fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
             ],
-          ).animate().fadeIn(duration: 800.ms, delay: 800.ms),
+          ).animate().fadeIn(duration: 800.ms, delay: 400.ms),
         ],
       ),
     );
@@ -581,15 +623,16 @@ class _ManageKosPageState extends State<ManageKosPage>
 
   Widget _buildKosCard(Kos kos, int index) {
     return Container(
-          margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF291C0E).withOpacity(0.08),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+            color: const Color(0xFF291C0E).withOpacity(0.1),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+            spreadRadius: 0,
               ),
             ],
           ),
@@ -603,7 +646,7 @@ class _ManageKosPageState extends State<ManageKosPage>
                   topRight: Radius.circular(20),
                 ),
                 child: Container(
-                  height: 200,
+              height: 180,
                   width: double.infinity,
                   color: const Color(0xFFE1D4C2),
                   child: kos.image != null
@@ -623,16 +666,16 @@ class _ManageKosPageState extends State<ManageKosPage>
                           errorWidget: (context, url, error) => Container(
                             color: const Color(0xFFE1D4C2),
                             child: Icon(
-                              Icons.home_outlined,
-                              size: 60,
-                              color: const Color(0xFF6E473B).withOpacity(0.7),
+                          Icons.home_rounded,
+                          size: 64,
+                          color: const Color(0xFF6E473B).withOpacity(0.5),
                             ),
                           ),
                         )
                       : Icon(
-                          Icons.home_outlined,
-                          size: 60,
-                          color: const Color(0xFF6E473B).withOpacity(0.7),
+                      Icons.home_rounded,
+                      size: 64,
+                      color: const Color(0xFF6E473B).withOpacity(0.5),
                         ),
                 ),
               ),
@@ -647,50 +690,53 @@ class _ManageKosPageState extends State<ManageKosPage>
                     Text(
                       kos.name,
                       style: GoogleFonts.poppins(
-                        fontSize: 18,
+                    fontSize: 20,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF291C0E),
+                    height: 1.2,
                       ),
                     ),
 
-                    const SizedBox(height: 8),
+                const SizedBox(height: 10),
 
                     // Address
                     Row(
                       children: [
                         Icon(
-                          Icons.location_on_outlined,
-                          size: 16,
-                          color: const Color(0xFF6E473B).withOpacity(0.7),
+                      Icons.location_on_rounded,
+                      size: 18,
+                      color: const Color(0xFF6E473B).withOpacity(0.8),
                         ),
-                        const SizedBox(width: 4),
+                    const SizedBox(width: 6),
                         Expanded(
                           child: Text(
                             kos.address,
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               color: const Color(0xFF291C0E).withOpacity(0.7),
+                          fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
                       ],
                     ),
 
-                    if (kos.description != null) ...[
-                      const SizedBox(height: 8),
+                if (kos.description != null && kos.description!.isNotEmpty) ...[
+                  const SizedBox(height: 10),
                       Text(
                         kos.description!,
                         style: GoogleFonts.poppins(
-                          fontSize: 14,
+                      fontSize: 13,
                           color: const Color(0xFF291C0E).withOpacity(0.6),
                           height: 1.4,
+                      fontWeight: FontWeight.w400,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
 
-                    const SizedBox(height: 16),
+                const SizedBox(height: 18),
 
                     // Action Buttons
                     Row(
@@ -698,24 +744,41 @@ class _ManageKosPageState extends State<ManageKosPage>
                         Expanded(
                           child: OutlinedButton.icon(
                             onPressed: () async {
+                          // Debug: Print kos data before navigation
+                          print('DEBUG ManageKosPage: Navigating to edit kos');
+                          print('DEBUG ManageKosPage: Kos ID: ${kos.id}');
+                          print('DEBUG ManageKosPage: Kos name: "${kos.name}"');
+                          
+                          // Pass both ID and name as a Map to ensure data is preserved
+                          final argumentsMap = {
+                            'id': kos.id,
+                            'name': kos.name,
+                          };
+                          print('DEBUG ManageKosPage: Arguments Map: $argumentsMap');
+                          print('DEBUG ManageKosPage: Arguments type: ${argumentsMap.runtimeType}');
+                          
                               final result = await Navigator.of(
                                 context,
-                              ).pushNamed('/edit_kos', arguments: kos);
+                          ).pushNamed('/edit_kos', arguments: argumentsMap);
                               if (result == true) {
                                 // Refresh the list if edit was successful
                                 _loadKosList();
                               }
                             },
                             style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: Color(0xFF6E473B)),
+                          side: const BorderSide(
+                            color: Color(0xFF6E473B),
+                            width: 1.5,
+                          ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(14),
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          backgroundColor: Colors.white,
                             ),
                             icon: const Icon(
-                              Icons.edit_outlined,
-                              size: 18,
+                          Icons.edit_rounded,
+                          size: 20,
                               color: Color(0xFF6E473B),
                             ),
                             label: Text(
@@ -723,6 +786,7 @@ class _ManageKosPageState extends State<ManageKosPage>
                               style: GoogleFonts.poppins(
                                 color: const Color(0xFF6E473B),
                                 fontWeight: FontWeight.w600,
+                            fontSize: 15,
                               ),
                             ),
                           ),
@@ -738,15 +802,23 @@ class _ManageKosPageState extends State<ManageKosPage>
                               foregroundColor: Colors.red.shade600,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            borderRadius: BorderRadius.circular(14),
+                            side: BorderSide(
+                              color: Colors.red.shade200,
+                              width: 1,
                             ),
-                            icon: const Icon(Icons.delete_outline, size: 18),
+                              ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                        icon: const Icon(
+                          Icons.delete_outline_rounded,
+                          size: 20,
+                        ),
                             label: Text(
                               'Hapus',
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w600,
+                            fontSize: 15,
                               ),
                             ),
                           ),
